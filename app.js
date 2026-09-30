@@ -8,6 +8,7 @@
 /* =========================================================
    1. CONFIGURATION
    ========================================================= */
+
 const STORAGE_KEY = "budgetflow_transactions_v2";
 const SETTINGS_KEY = "budgetflow_settings_v2";
 
@@ -296,6 +297,7 @@ function saveSettings() {
 function createDemoTransactions() {
     return [];
 }
+
 /* =========================================================
    7. NAVIGATION
    ========================================================= */
