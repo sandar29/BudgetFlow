@@ -122,7 +122,7 @@ const state = {
     transactions: [],
     settings: {
         balanceVisible: true,
-        userName: "Rifky"
+        userName: "Sandar"
     },
 
     currentPage: "home",
@@ -932,7 +932,7 @@ function renderUser() {
 
     element.textContent =
         state.settings.userName ||
-        "Rifky";
+        "Sandar";
 
 }
 
