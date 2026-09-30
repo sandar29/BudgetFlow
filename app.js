@@ -122,7 +122,7 @@ const state = {
     transactions: [],
     settings: {
         balanceVisible: true,
-        userName: "Sandar"
+        userName: "Rifky"
     },
 
     currentPage: "home",
@@ -174,6 +174,8 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeSettings();
 
     initializeZakat();
+
+    initializePWA();
 
     renderApplication();
 
@@ -295,7 +297,65 @@ function saveSettings() {
    ========================================================= */
 
 function createDemoTransactions() {
-    return [];
+
+    const today = new Date();
+
+    const currentMonth =
+        today.getMonth();
+
+    const currentYear =
+        today.getFullYear();
+
+    return [
+
+        {
+            id: cryptoId(),
+            type: "income",
+            amount: 8500000,
+            category: "salary",
+            note: "Gaji",
+            date: formatDateForInput(
+                new Date(
+                    currentYear,
+                    currentMonth,
+                    Math.max(1, today.getDate() - 1)
+                )
+            ),
+            createdAt: Date.now() - 5000
+        },
+
+        {
+            id: cryptoId(),
+            type: "expense",
+            amount: 45000,
+            category: "food",
+            note: "Makan siang",
+            date: formatDateForInput(today),
+            createdAt: Date.now() - 4000
+        },
+
+        {
+            id: cryptoId(),
+            type: "expense",
+            amount: 28000,
+            category: "transport",
+            note: "Transportasi",
+            date: formatDateForInput(today),
+            createdAt: Date.now() - 3000
+        },
+
+        {
+            id: cryptoId(),
+            type: "expense",
+            amount: 75000,
+            category: "food",
+            note: "Makan malam",
+            date: formatDateForInput(today),
+            createdAt: Date.now() - 2000
+        }
+
+    ];
+
 }
 
 /* =========================================================
@@ -931,7 +991,7 @@ function renderUser() {
 
     element.textContent =
         state.settings.userName ||
-        "Sandar";
+        "Rifky";
 
 }
 
@@ -3384,6 +3444,237 @@ function renderZakat() {
 
         <p class="zakat-hint">${hint}</p>
     `;
+
+}
+
+/* =========================================================
+   INSTALL APP (PWA)
+   ========================================================= */
+
+let deferredInstallPrompt = null;
+
+const PWA_FLAGS = {
+    offlineReady: "budgetflow_offline_ready",
+    installCardDismissed: "budgetflow_install_dismissed",
+    iosInstalled: "budgetflow_ios_installed"
+};
+
+function readFlag(key) {
+
+    try {
+        return localStorage.getItem(key) === "1";
+    } catch (error) {
+        return false;
+    }
+
+}
+
+function writeFlag(key) {
+
+    try {
+        localStorage.setItem(key, "1");
+    } catch (error) {
+        /* ignore */
+    }
+
+}
+
+function isStandaloneApp() {
+
+    return (
+        window.matchMedia("(display-mode: standalone)").matches ||
+        navigator.standalone === true
+    );
+
+}
+
+function isIOSDevice() {
+
+    return (
+        /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+        (
+            navigator.platform === "MacIntel" &&
+            navigator.maxTouchPoints > 1
+        )
+    );
+
+}
+
+function updateInstallButtons() {
+
+    const hideAll = isStandaloneApp();
+
+    $$("[data-install-wrap]").forEach(element => {
+
+        const isCard = element.id === "installCard";
+
+        element.hidden =
+            hideAll ||
+            (isCard && readFlag(PWA_FLAGS.installCardDismissed));
+
+    });
+
+}
+
+function showInstallInstructions() {
+
+    const intro = $("#installIntro");
+    const steps = $("#installSteps");
+
+    if (!intro || !steps) return;
+
+    const list = isIOSDevice()
+        ? [
+            "Buka situs ini di Safari.",
+            "Ketuk tombol Bagikan (ikon kotak dengan panah ke atas).",
+            "Pilih \"Tambah ke Layar Utama\", lalu ketuk Tambah."
+        ]
+        : [
+            "Buka menu browser (ikon titik tiga atau menu di pojok).",
+            "Pilih \"Instal aplikasi\" atau \"Tambahkan ke layar utama\".",
+            "Konfirmasi untuk menambahkannya."
+        ];
+
+    intro.textContent =
+        "Browser ini belum menampilkan jendela instal otomatis. " +
+        "Ikuti langkah berikut untuk memasang BudgetFlow:";
+
+    steps.innerHTML =
+        list.map(item => `<li>${escapeHTML(item)}</li>`).join("");
+
+    closeOverlay("settingsSheet");
+
+    openOverlay("installSheet", "[data-close-sheet]");
+
+}
+
+async function handleInstallClick() {
+
+    if (!window.isSecureContext) {
+
+        showToast(
+            "Instal hanya tersedia jika situs dibuka lewat HTTPS.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+    if (!deferredInstallPrompt) {
+
+        showInstallInstructions();
+
+        return;
+
+    }
+
+    const promptEvent = deferredInstallPrompt;
+
+    deferredInstallPrompt = null;
+
+    promptEvent.prompt();
+
+    const choice = await promptEvent.userChoice;
+
+    if (choice && choice.outcome === "dismissed") {
+
+        showToast("Instalasi dibatalkan.", "info");
+
+    }
+
+}
+
+function initializePWA() {
+
+    $$("[data-install]").forEach(button => {
+
+        button.addEventListener("click", handleInstallClick);
+
+    });
+
+    $("#installDismiss")?.addEventListener("click", () => {
+
+        writeFlag(PWA_FLAGS.installCardDismissed);
+
+        updateInstallButtons();
+
+    });
+
+    window.addEventListener("beforeinstallprompt", event => {
+
+        event.preventDefault();
+
+        deferredInstallPrompt = event;
+
+    });
+
+    window.addEventListener("appinstalled", () => {
+
+        deferredInstallPrompt = null;
+
+        updateInstallButtons();
+
+        showToast(
+            "BudgetFlow berhasil diinstal. Buka dari layar utama atau daftar aplikasi.",
+            "success",
+            "Instal berhasil"
+        );
+
+    });
+
+    updateInstallButtons();
+
+    /*
+     * iOS does not fire "appinstalled", so confirm on the
+     * first launch from the home screen instead.
+     */
+    if (
+        isStandaloneApp() &&
+        isIOSDevice() &&
+        !readFlag(PWA_FLAGS.iosInstalled)
+    ) {
+
+        writeFlag(PWA_FLAGS.iosInstalled);
+
+        showToast(
+            "BudgetFlow berhasil diinstal dan siap dipakai.",
+            "success",
+            "Instal berhasil"
+        );
+
+    }
+
+    if (
+        "serviceWorker" in navigator &&
+        window.isSecureContext
+    ) {
+
+        navigator.serviceWorker
+            .register("sw.js")
+            .catch(error => {
+                console.error("BudgetFlow: service worker gagal.", error);
+            });
+
+        navigator.serviceWorker.ready
+            .then(() => {
+
+                if (!readFlag(PWA_FLAGS.offlineReady)) {
+
+                    writeFlag(PWA_FLAGS.offlineReady);
+
+                    showToast(
+                        "Aplikasi sudah tersimpan dan bisa dipakai tanpa internet.",
+                        "success",
+                        "Siap offline"
+                    );
+
+                }
+
+            })
+            .catch(() => {});
+
+    }
 
 }
 
