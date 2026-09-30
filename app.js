@@ -8,7 +8,6 @@
 /* =========================================================
    1. CONFIGURATION
    ========================================================= */
-
 const STORAGE_KEY = "budgetflow_transactions_v2";
 const SETTINGS_KEY = "budgetflow_settings_v2";
 
@@ -122,7 +121,7 @@ const state = {
     transactions: [],
     settings: {
         balanceVisible: true,
-        userName: "Rifky"
+        userName: "Sandar"
     },
 
     currentPage: "home",
@@ -930,7 +929,7 @@ function renderUser() {
 
     element.textContent =
         state.settings.userName ||
-        "Rifky";
+        "Sandar";
 
 }
 
