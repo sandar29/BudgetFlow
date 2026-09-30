@@ -2,20 +2,36 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0f766e">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <meta name="apple-mobile-web-app-title" content="BudgetFlow">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230f766e'/%3E%3Crect x='16' y='34' width='8' height='14' rx='4' fill='%23fff' opacity='.6'/%3E%3Crect x='28' y='26' width='8' height='22' rx='4' fill='%23fff' opacity='.8'/%3E%3Crect x='40' y='16' width='8' height='32' rx='4' fill='%23fff'/%3E%3C/svg%3E">
-  <title>BudgetFlow — Personal Finance</title>
-  <meta name="description" content="BudgetFlow — monitor pemasukan, pengeluaran, dan kondisi finansial pribadi dengan sederhana.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400..800&family=Manrope:wght@500..800&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@1.48.0/dist/umd/lucide.min.js"></script>
-  <link rel="stylesheet" href="style.css">
-    </head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <meta name="theme-color" content="#0f766e">
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="BudgetFlow">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%230f766e'/%3E%3Crect x='16' y='34' width='8' height='14' rx='4' fill='%23fff' opacity='.6'/%3E%3Crect x='28' y='26' width='8' height='22' rx='4' fill='%23fff' opacity='.8'/%3E%3Crect x='40' y='16' width='8' height='32' rx='4' fill='%23fff'/%3E%3C/svg%3E">
+
+    <title>BudgetFlow — Personal Finance</title>
+
+    <meta
+        name="description"
+        content="BudgetFlow — monitor pemasukan, pengeluaran, dan kondisi finansial pribadi dengan sederhana."
+    >
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400..800&family=Manrope:wght@500..800&display=swap"
+        rel="stylesheet"
+    >
+
+    <script src="https://unpkg.com/lucide@1.48.0/dist/umd/lucide.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
 
 <body>
 
@@ -87,6 +103,26 @@
                     29 Sep 2026
                 </div>
             </div>
+
+            <!-- INSTALL CARD -->
+            <article class="install-card" id="installCard" data-install-wrap hidden>
+
+                <div class="install-icon">
+                    <i data-lucide="download"></i>
+                </div>
+
+                <div class="install-text">
+                    <strong>Pakai sebagai aplikasi</strong>
+                    <span>Instal agar bisa dibuka offline dari layar utama.</span>
+                </div>
+
+                <button class="install-action" type="button" data-install>Instal</button>
+
+                <button class="install-close" id="installDismiss" type="button" aria-label="Sembunyikan">
+                    <i data-lucide="x"></i>
+                </button>
+
+            </article>
 
             <!-- BALANCE CARD -->
             <article class="balance-card">
@@ -1081,7 +1117,35 @@
                 <input type="text" id="settingsName" maxlength="30" placeholder="Nama kamu" autocomplete="off">
             </label>
 
+            <button class="secondary-button install-setting" type="button" data-install data-install-wrap hidden>
+                Instal aplikasi (bisa offline)
+            </button>
+
             <button class="primary-button" id="saveSettings">Simpan</button>
+
+        </div>
+    </div>
+
+    <!-- INSTALL INSTRUCTIONS -->
+    <div class="sheet-overlay" id="installSheet">
+        <div class="bottom-sheet" role="dialog" aria-modal="true" aria-labelledby="installTitle">
+
+            <div class="sheet-handle"></div>
+
+            <div class="sheet-header">
+                <div>
+                    <span class="eyebrow">INSTALL</span>
+                    <h2 id="installTitle">Instal BudgetFlow</h2>
+                </div>
+
+                <button class="icon-button" data-close-sheet="installSheet" aria-label="Tutup">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <p class="install-intro" id="installIntro"></p>
+
+            <ol class="install-steps" id="installSteps"></ol>
 
         </div>
     </div>
