@@ -11,11 +11,15 @@
 
 const STORAGE_KEY = "budgetflow_transactions_v2";
 const SETTINGS_KEY = "budgetflow_settings_v2";
-
 const CATEGORY_META = {
     food: {
         name: "Makanan",
         icon: "utensils"
+    },
+
+    drink: {
+        name: "Minuman",
+        icon: "coffee"
     },
 
     transport: {
